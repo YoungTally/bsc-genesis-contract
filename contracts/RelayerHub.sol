@@ -154,14 +154,9 @@ contract RelayerHub is IRelayerHub, System, IParamSubscriber {
         require(!relayerExistsMap[relayerToBeAdded], "relayer already exists");
         require(!isContract(relayerToBeAdded), "contract is not allowed to be a relayer");
 
-        managersAndRelayers[msg.sender] = relayerToBeAdded;
-        relayerExistsMap[relayerToBeAdded] = true;
-        emit editRelayerEvent(relayerToBeAdded);
-    }
-
-    function editRelayer(address relayerToBeAdded) external onlyRegisteredManager noProxy {
-        require(!relayerExistsMap[relayerToBeAdded], "relayer already exists");
-        require(!isContract(relayerToBeAdded), "contract is not allowed to be a relayer");
+        if(managersAndRelayers[msg.sender] != address(0)) {
+            removeRelayer();
+        } 
 
         managersAndRelayers[msg.sender] = relayerToBeAdded;
         relayerExistsMap[relayerToBeAdded] = true;
@@ -192,6 +187,6 @@ contract RelayerHub is IRelayerHub, System, IParamSubscriber {
 
     // TODO remove just for testing
     function isManager(address relayerAddress) external view returns (bool){
-        return managersRegistered[relayerAddress];
+        return relayManagersExistMap[relayerAddress];
     }
 }
